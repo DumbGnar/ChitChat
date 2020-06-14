@@ -3,11 +3,10 @@ package com.example.demo;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class ChitChatApplicationTests {
+import com.example.demo.model.User;
 
-	@Test
-	void contextLoads() {
-	}
+@SpringBootTest
+public class ChitChatApplicationTests 
+{
 
 }

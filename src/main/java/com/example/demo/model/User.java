@@ -1,12 +1,6 @@
 package com.example.demo.model;
 
-import java.util.ArrayList;
 
-import com.example.demo.base.user.UserUtils;
-import com.example.demo.base.user.UserInitializer;
-import dev.morphia.annotations.Entity;
-import dev.morphia.annotations.Id;
-import org.bson.types.ObjectId;
 
 @Entity
 public class User {
@@ -34,6 +28,8 @@ public class User {
 
     private int age = 0;
 
+    private String intro = "这个人很懒，什么也没有留下~";
+
     private ArrayList<Integer> blackList = new ArrayList<Integer>();;
 
     private ArrayList<Integer> friendList = new ArrayList<Integer>();;
@@ -42,19 +38,9 @@ public class User {
     }
 
     public User(String username, String password, String email) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.nickname = username;
-    }
-
-//    public User(UserInitializer user) {
-//        this.age = user.getAge();
-//        this.blackList = new ArrayList<Integer>();
-//        this.friendList = new ArrayList<Integer>();
-//        this.loginID = user.getLoginID();
-//        this.password = user.getPassword();
-//        this.sex = user.getSex();
-//        this.UID = ++UserUtils.counts;
-//    }
+		this.username = username;
+		this.password = password;
+		this.email = email;
+		this.nickname = username;
+	}
 }
