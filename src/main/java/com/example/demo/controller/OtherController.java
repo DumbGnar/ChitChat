@@ -51,17 +51,22 @@ public class OtherController {
 //        return new MyResponse(true, "注册成功").toString();
 //    }
 
-    @PostMapping("register")
-    public MyResponse register(@RequestParam String username,
-                               @RequestParam String email,
-                               @RequestParam String password,
-                               @RequestParam String code) {
-        if (!UserService.checkUsername(username)) {
-            return new MyResponse(false, "用户名已存在");
-        } else if (!CodeService.checkCode(email, code)) {
-            return new MyResponse(false, "验证码错误");
-        }
-        UserService.save(new User(username, email, password));
-        return new MyResponse(true, "注册成功");
-    }
+    /*
+         * 和addUser功能上有交集，前端已用addUser故注释掉
+     * */
+    
+//    @PostMapping("register")
+//    public MyResponse register(@RequestParam String username,
+//                               @RequestParam String email,
+//                               @RequestParam String password,
+//                               @RequestParam String code) {
+//        if (!UserService.checkUsername(username)) {
+//            return new MyResponse(false, "用户名已存在");
+//        } else if (!CodeService.checkCode(email, code)) {
+//            return new MyResponse(false, "验证码错误");
+//        }
+//        UserService.save(new User(username, email, password));
+//        return new MyResponse(true, "注册成功");
+//    }
+
 }
