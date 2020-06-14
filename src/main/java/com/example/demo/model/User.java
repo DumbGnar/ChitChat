@@ -23,6 +23,11 @@ public class User {
     private String nickname;
 
     /**
+     * 状态: 0 离线, 1 在线
+     */
+    private int status = 0;
+
+    /**
      * 性别: 0 男, 1 女
      */
     private int sex = 0;
@@ -32,8 +37,6 @@ public class User {
     private ArrayList<Integer> blackList = new ArrayList<Integer>();;
 
     private ArrayList<Integer> friendList = new ArrayList<Integer>();;
-
-    // private Image headPortrait;	//取消原因：头像存放在一个默认路径，前端通过uid访问返回图像的信息不必放到类属性里
 
     public User() {
     }
