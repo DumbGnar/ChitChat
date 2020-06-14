@@ -17,7 +17,7 @@ public class UserService {
 	//public static String baseUserImagePath = "D:\\testimage";		//用户的各种图像，包括头像，表情包的总基地址
 	public static String baseUserImagePath = "/home/ubuntu/ChitChat/back/images";
 	
-	public static int counts = UserService.getMaxUID() + 1;	//计数，分配User的uid
+	public static int counts = UserService.getMaxUID();	//计数，分配User的uid
 	
 	//根据用户的UID返回其头像在服务器目录地址，通过new一个File(返回地path)来获取对头像head.jpg的引用；欢迎使用
 	public static BufferedImage getHeadPortraitByID(int id) {
@@ -55,6 +55,8 @@ public class UserService {
 	public static boolean setUserToDefaultHeadtrait(Integer uid, Integer headportrait) {
 		String src = baseUserImagePath + "/default_headportrait/" + headportrait + ".jpg";
 		String to = baseUserImagePath + "/" + uid + "/" +"head.jpg";
+		System.out.println(src);
+		System.out.println(to);
 		//原头像删除
 //		File head = new File(to);
 //		if(head.exists()) {
