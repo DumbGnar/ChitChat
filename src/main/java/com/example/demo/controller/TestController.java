@@ -13,15 +13,10 @@ public class TestController {
 	@Autowired
 	private MongoTemplate mongoTemplate;
 	
+	//现在不许通过不正规方式添加用户
 	@RequestMapping("/hello")
-	public User say() {
-		return new User("123456", "cs","1@qq.com");
+	public String say() {
+		return "Yes, Indeed\n";
 	}
 	
-	@RequestMapping("/testdb")
-	public boolean db() {
-		
-		mongoTemplate.insert(new User("testUser", "123456","1@qq.com"));
-		return true;
-	}
 }

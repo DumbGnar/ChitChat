@@ -54,6 +54,14 @@ public class UserController {
 	}
 	
 	
+	//把某个用户的头像设置成默认头像
+	@RequestMapping("user/headportrait/setto/{uid}/{num}")
+	public boolean setUserHeadPortraitByID(@PathVariable(value = "uid")Integer id,
+			@PathVariable(value = "num")Integer num) {
+		return UserService.setUserToDefaultHeadtrait(id, num);
+	}
+	
+	
 	//（登录用）验证用户名和密码是否匹配，匹配成功返回用户
 	@RequestMapping("/user/login/{loginID}/{password}")
 	public User userLogin(@PathVariable(value = "loginID")String loginID,
@@ -129,23 +137,25 @@ public class UserController {
 	
 	
 	//添加新用户
-	@RequestMapping("/user/add/{loginID}/{password}/{email}")
+	@RequestMapping("/user/add/{loginID}/{password}")
 	public boolean addUser(@PathVariable(value = "loginID")String loginID, 
-			@PathVariable(value = "password")String password,@PathVariable(value = "email")String email) {
+			@PathVariable(value = "password")String password) {
 		try {
-			adduserProduce(loginID, password,email);
+			adduserProduce(loginID, password);
 		}catch(Exception e) {
 			System.out.println("USER ADD ERROR\n");
 			return false;
 		}
 		return true;
 	}
-	private void adduserProduce(String loginID, String password,String email) throws Exception{
-		User tobeAdded = new User(loginID, password,email);
+	private void adduserProduce(String loginID, String password) throws Exception{
+		User tobeAdded = new User(loginID, password);
 		//image cache folder
-		File base = new File(UserService.baseUserImagePath + "//" + tobeAdded.getUid());
+		File base = new File(UserService.baseUserImagePath + "//" + tobeAdded.getUID());
 		if(base.exists()) throw new Exception();
 		else base.mkdir();
+		//create a default head.jpg in folder
+		UserService.setUserToDefaultHeadtrait(tobeAdded.getUID(), UserService.HEAD_DEFAULT);
 		//user collection 
 		this.mongoTemplate.insert(tobeAdded);
 	}
