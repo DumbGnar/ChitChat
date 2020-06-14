@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -30,7 +31,7 @@ public class UserController {
 	
 	//根据用户UID获取用户信息
 	@RequestMapping("user/{uid}")
-	public User getUserByID(@PathVariable(value = "uid")Integer id) {
+	public User getUserByID(@PathVariable(value = "uid")int id) {
 		//数据库检索
 		User res = this.mongoTemplate.findOne(new Query(Criteria.where("_id").is(id)), User.class, this.collection_name);
 		return res;	//要改的
@@ -48,7 +49,7 @@ public class UserController {
 	
 	//根据用户UID获取用户头像图片,这个方法已完成
 	@RequestMapping("user/headportrait/{uid}")
-	public BufferedImage getUserHeadPortraitByID(@PathVariable(value = "uid")Integer id) {
+	public BufferedImage getUserHeadPortraitByID(@PathVariable(value = "uid")int id) {
 		return UserService.getHeadPortraitByID(id);
 	}
 	
@@ -128,21 +129,21 @@ public class UserController {
 	
 	
 	//添加新用户
-	@RequestMapping("/user/add/{loginID}/{password}")
+	@RequestMapping("/user/add/{loginID}/{password}/{email}")
 	public boolean addUser(@PathVariable(value = "loginID")String loginID, 
-			@PathVariable(value = "password")String password) {
+			@PathVariable(value = "password")String password,@PathVariable(value = "email")String email) {
 		try {
-			adduserProduce(loginID, password);
+			adduserProduce(loginID, password,email);
 		}catch(Exception e) {
 			System.out.println("USER ADD ERROR\n");
 			return false;
 		}
 		return true;
 	}
-	private void adduserProduce(String loginID, String password) throws Exception{
-		User tobeAdded = new User(loginID, password);
+	private void adduserProduce(String loginID, String password,String email) throws Exception{
+		User tobeAdded = new User(loginID, password,email);
 		//image cache folder
-		File base = new File(UserService.baseUserImagePath + "//" + tobeAdded.getUID());
+		File base = new File(UserService.baseUserImagePath + "//" + tobeAdded.getUid());
 		if(base.exists()) throw new Exception();
 		else base.mkdir();
 		//user collection 

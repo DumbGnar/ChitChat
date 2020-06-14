@@ -15,13 +15,13 @@ public class TestController {
 	
 	@RequestMapping("/hello")
 	public User say() {
-		return new User("123456", "cs");
+		return new User("123456", "cs","1@qq.com");
 	}
 	
 	@RequestMapping("/testdb")
 	public boolean db() {
 		
-		mongoTemplate.insert(new User("testUser", "123456"));
+		mongoTemplate.insert(new User("testUser", "123456","1@qq.com"));
 		return true;
 	}
 }
