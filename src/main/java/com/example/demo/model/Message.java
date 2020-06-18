@@ -24,22 +24,27 @@ public class Message {
      */
     private int type;
 
-    private String fromId;
+    private int fromId;
 
-    private String toId;
-
+    private int toId;//用户或者房间Id
+ 
     private Date sendTime = new Date();
+    
+    private int style; //辨别记录是文字还是图片,1文字2图片;
+    
+    private int read; // 已读未读,1已读,2未读;
 
     private String content = "";
 
-    public Message(int type, String fromId, String toId, String content) {
+    public Message(int type, int fromId, int toId, String content ,int style) {
         this.type = type;
         this.fromId = fromId;
         this.toId = toId;
         this.content = content;
+        this.style = style;
     }
 
-    public Message(int type, String fromId, String toId) {
+    public Message(int type, int fromId, int toId) {
         this.type = type;
         this.fromId = fromId;
         this.toId = toId;
@@ -53,11 +58,11 @@ public class Message {
         return type;
     }
 
-    public String getFromId() {
+    public int getFromId() {
         return fromId;
     }
 
-    public String getToId() {
+    public int getToId() {
         return toId;
     }
 
@@ -68,4 +73,13 @@ public class Message {
     public String getContent() {
         return content;
     }
+
+	public int getStyle() {
+		return style;
+	}
+
+	public int getRead() {
+		return read;
+	}
+
 }
