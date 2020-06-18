@@ -21,7 +21,7 @@ public class ChitChatApplication {
     public FilterRegistrationBean registerFilter(){
         FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.addUrlPatterns("/*");
-        bean.setFilter(new CrosFilter());
+        bean.setFilter(new CorsFilter());
         return bean;
     }
 }

@@ -15,15 +15,11 @@ public class Message {
     public static final int SINGLE_CHAT = 1;
     public static final int GROUP_CHAT = 2;
     public static final int ADD_FRIEND = 3;
-    public static final int DEL_FRIEND = 4;
-    public static final int BLACK_FRIEND = 5;
 
     /**
      * 类型1: 单聊
      * 类型2: 群聊
      * 类型3: 添加好友
-     * 类型4: 删除好友
-     * 类型5: 拉黑好友
      * ...
      */
     private int type;
