@@ -2,16 +2,16 @@ package com.example.demo.model;
 
 import java.util.ArrayList;
 
-public class imagestorage {
+public class ImageStorage {
 	 
 	   //创建 SingleObject 的一个对象
-	   private static imagestorage instance = new imagestorage();
+	   private static ImageStorage instance = new ImageStorage();
 	 
 
-	   private imagestorage(){}
+	   private ImageStorage(){}
 	   private ArrayList<Integer> images;
 	  
-	   public static imagestorage getInstance(){
+	   public static ImageStorage getInstance(){
 	      return instance;
 	   }
 	

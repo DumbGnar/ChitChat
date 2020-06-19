@@ -12,31 +12,38 @@ public class Message {
     @Id
     private ObjectId id;
 
-    public static final int SINGLE_CHAT = 1;
-    public static final int GROUP_CHAT = 2;
-    public static final int ADD_FRIEND = 3;
-
     /**
-     * 类型1: 单聊
-     * 类型2: 群聊
-     * 类型3: 添加好友
-     * ...
+     * 1: 单聊
+     * 2: 群聊
+     * 3: 添加好友
      */
     private int type;
 
     private int fromId;
 
-    private int toId;//用户或者房间Id
+    /**
+     * 用户或者房间的Id
+     */
+    private int toId;
  
     private Date sendTime = new Date();
-    
-    private int style; //辨别记录是文字还是图片,1文字2图片;
-    
-    private int read; // 已读未读,1已读,2未读;
+
+    /**
+     * 辨别记录是文字还是图片
+     * 1 文字
+     * 2 图片
+     */
+    private int style;
+
+    /**
+     *  1 已读
+     *  2 未读
+     */
+    private int read = 2;
 
     private String content = "";
 
-    public Message(int type, int fromId, int toId, String content ,int style) {
+    public Message(int type, int fromId, int toId, String content , int style) {
         this.type = type;
         this.fromId = fromId;
         this.toId = toId;
