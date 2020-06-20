@@ -1,12 +1,12 @@
 package com.example.demo.model;
 
-import dev.morphia.annotations.Entity;
-import dev.morphia.annotations.Id;
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
-@Entity
+@Document
 public class Message {
 
     @Id
