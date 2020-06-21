@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.ChatInfo;
 import com.example.demo.model.Message;
 import com.example.demo.model.NetMessage;
 import com.example.demo.service.MessageService;
@@ -12,10 +13,12 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class MessageController {
@@ -30,15 +33,28 @@ public class MessageController {
         this.mongoTemplate = mongoTemplate;
     }
 
+    @ResponseBody
+    @PostMapping("/msg/chatinfo/{myId}")
+    public List<ChatInfo> getChatInfoList(@PathVariable int myId) {
+        return MessageService.getChatInfoList(myId);
+    }
+
     @PostMapping("/msg/read/user/{myId}/{uid}")
     public void readUserMessage(@PathVariable int myId,
                                 @PathVariable int uid) {
         MessageService.readUserMessage(myId, uid);
     }
 
+    @PostMapping("/msg/read/room/{myId}/{rid}")
+    public void readRoomMessage(@PathVariable int myId,
+                                @PathVariable int rid) {
+        MessageService.readRoomMessage(myId, rid);
+    }
+
     /**
      * 返回用户myId的好友uid发给他的所有未读消息
      */
+    @ResponseBody
     @PostMapping("/msg/user/{myId}/{uid}")
     public List<NetMessage> getUnreadUser(@PathVariable int myId,
                                           @PathVariable int uid) {
@@ -51,6 +67,7 @@ public class MessageController {
         return netMessages;
     }
 
+    @ResponseBody
     @PostMapping("/msg/room/{myId}/{rid}")
     public List<NetMessage> getUnreadRoom(@PathVariable int myId,
                                           @PathVariable int rid) {

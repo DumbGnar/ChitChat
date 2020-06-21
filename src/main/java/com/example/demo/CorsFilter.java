@@ -18,6 +18,7 @@ public class CorsFilter implements javax.servlet.Filter {
         res.addHeader("Access-Control-Allow-Methods", "*");
         res.addHeader("Access-Control-Allow-Credentials", "true");
         res.addHeader("Access-Control-Max-Age", "31536000");
+        res.addHeader("Access-Control-Allow-Headers", "Content-Type,Access-Token");
         filterChain.doFilter(servletRequest, servletResponse);
     }
  
