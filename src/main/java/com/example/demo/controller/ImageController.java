@@ -1,34 +1,41 @@
 package com.example.demo.controller;
 
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 
 import com.example.demo.service.ImageService;
-import com.example.demo.service.StorageService;
 import com.example.demo.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-
 import com.example.demo.model.ImageStorage;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RestController
 public class ImageController {
 
-    private ImageStorage object = ImageStorage.getInstance();
+    private final ImageStorage object = ImageStorage.getInstance();
+
+    @PostMapping("/images/{uid}/faces/{fileName}/delete")
+    public boolean deleteFace(@PathVariable int uid,
+                             @PathVariable String fileName) {
+        String path = UserService.baseUserImagePath + "/" + uid + "/faces/" + fileName + ".jpg";
+        File file = new File(path);
+        return file.delete();
+    }
+
+    @GetMapping("/images/{uid}/faces")
+    public List<String> getFacesFileName(@PathVariable int uid) {
+        String dirPath = UserService.baseUserImagePath + "/" + uid + "/faces";
+        File dir = new File(dirPath);
+        return new ArrayList<String>(Arrays.asList(dir.list()));
+    }
 
     @PostMapping("/upload/image/{uid}/{type}")
-    public String handleImageUpload(@RequestParam("image") String base64Image,
+    public String handleImageUpload(@RequestBody HashMap<String,String> map,
                                     @PathVariable int uid,
                                     @PathVariable int type) {
+        String base64Image = map.get("image");
         String path = UserService.baseUserImagePath + "/" + uid + "/";
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         String dateString = formatter.format(new Date());
@@ -49,28 +56,41 @@ public class ImageController {
         }
         try {
             ImageService.saveBase64Image(base64Image, path);
+        } catch (IllegalArgumentException e) {
+            return "Illegal Base64 image";
         } catch (IOException e) {
             return "Writing to file failed";
         }
-        return "Upload successfully";
+        return dateString;
     }
 
-    // 查看所有图片
-    @RequestMapping("image/view")//返回所有图片的序号
-    public ArrayList<Integer> viewimage() {
+    /**
+     * 查看所有图片
+     * @return
+     */
+    @RequestMapping("images/view")//返回所有图片的序号
+    public ArrayList<Integer> viewImage() {
         return object.getImages();
     }
 
-    // 删除某个图片
-    @RequestMapping("image/delete/{id}")//将此图片的序号在仓库中删除
-    public boolean deleteone(@PathVariable(value = "id") int id) {
+    /**
+     * 删除某个图片
+     * @param id
+     * @return
+     */
+    @RequestMapping("images/delete/{id}")//将此图片的序号在仓库中删除
+    public boolean deleteOne(@PathVariable(value = "id") int id) {
 
         object.deleteImage(id);
         return true;
     }
 
-    // 添加某图片
-    @RequestMapping("image/add/{id}")//将此图片存放进仓库
+    /**
+     * 添加某图片
+     * @param id
+     * @return
+     */
+    @RequestMapping("images/add/{id}")//将此图片存放进仓库
     public boolean addImageById(@PathVariable(value = "id") int id) {
         object.addImage(id);
         return true;
