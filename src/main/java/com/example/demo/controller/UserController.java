@@ -34,7 +34,7 @@ public class UserController {
 	public User getUserByID(@PathVariable(value = "uid")int id) {
 		//数据库检索
 		User res = this.mongoTemplate.findOne(new Query(Criteria.where("_id").is(id)), User.class, this.collection_name);
-		return res;	//要改的
+		return res;	
 	}
 	
 	
@@ -48,6 +48,7 @@ public class UserController {
 	
 	
 	//根据用户UID获取用户头像图片,这个方法已完成
+	//现在前端用的URL方式访问图片资源，此接口暂不需要
 	@RequestMapping("user/headportrait/{uid}")
 	public BufferedImage getUserHeadPortraitByID(@PathVariable(value = "uid")int id) {
 		return UserService.getHeadPortraitByID(id);
@@ -82,7 +83,7 @@ public class UserController {
 	 * 5.headportrait 头像
 	 * 6.nickname	昵称
 	 * 7.intro		简介
-	 * 8.email
+	 * 8.email		邮箱
 	 * */
 	@RequestMapping("/user/changeInfo/{uid}/{method}/{content}")
 	public boolean userChangeInfo(@PathVariable(value = "uid")Integer uid,
@@ -154,6 +155,14 @@ public class UserController {
 		File base = new File(UserService.baseUserImagePath + "//" + tobeAdded.getUID());
 		if(base.exists()) throw new Exception();
 		else base.mkdir();
+		/*
+		 * 6月20日补充
+		 * 现在伴随创建imagecache和faces
+		 * */
+		File faces = new File(UserService.baseUserImagePath + "//" + tobeAdded.getUID() + "//faces");
+		if(!faces.exists()) faces.mkdir();
+		File imagecache = new File(UserService.baseUserImagePath + "//" + tobeAdded.getUID() + "//imagecache");
+		if(!imagecache.exists()) imagecache.mkdir();
 		//create a default head.jpg in folder
 		UserService.setUserToDefaultHeadtrait(tobeAdded.getUID(), UserService.HEAD_DEFAULT);
 		//user collection 
@@ -197,7 +206,7 @@ public class UserController {
 			@PathVariable(value = "whose")Integer my_uid, 
 			@PathVariable(value = "operand")Integer friend_uid) {
 		User me = this.mongoTemplate.findOne(new Query(Criteria.where("_id").is(my_uid)), User.class, this.collection_name);
-		User friend = this.mongoTemplate.findOne(new Query(Criteria.where("_id").is(my_uid)), User.class, this.collection_name);
+		User friend = this.mongoTemplate.findOne(new Query(Criteria.where("_id").is(friend_uid)), User.class, this.collection_name);
 		if(friend == null) return "用户不存在！";
 		switch(method) {
 		case 1:
@@ -219,6 +228,40 @@ public class UserController {
 			return "您已删除好友。";
 		}
 		return "未知错误，清联系系统管理员";
+	}
+	
+	
+	//黑名单的增删
+	/*
+	 * 返回操作的成功与否
+	 * method = 1 : 添加某人到黑名单
+	 * method = 2 : 删除某人到黑名单
+	 * */
+	@RequestMapping("/user/blacklist/{method}/{whose}/{operand}")
+	public String blacklistOperation(@PathVariable(value = "method")Integer method, 
+										@PathVariable(value = "whose")Integer my_uid, 
+										@PathVariable(value = "operand")Integer black_uid) {
+		User me = this.mongoTemplate.findOne(new Query(Criteria.where("_id").is(my_uid)), User.class, this.collection_name);
+		User black = this.mongoTemplate.findOne(new Query(Criteria.where("_id").is(black_uid)), User.class, this.collection_name);
+		if(black == null) return "用户不存在!";
+		switch(method) {
+		case 1:
+			//拉黑某人
+			if(me.getBlackList().contains(black_uid)) return "您已将其拉入黑名单!";
+			//单项操作，只需要修改“我”的黑名单，而且不会产生message向被拉黑方通知
+			me.getBlackList().add(black_uid);
+			this.mongoTemplate.findAllAndRemove(new Query(Criteria.where("_id").is(my_uid)), User.class, this.collection_name);
+			this.mongoTemplate.insert(me);
+			return "您已将用户成功拉黑，请刷新页面!";
+		case 2:
+			//解除某人的拉黑,因为是通过黑名单操作，所以一定是解除已经在黑名单里的人，后端不进行不合理性判断
+			me.getBlackList().remove(me.getBlackList().indexOf(black_uid));
+			this.mongoTemplate.findAllAndRemove(new Query(Criteria.where("_id").is(my_uid)), User.class, this.collection_name);
+			this.mongoTemplate.insert(me);
+			return "您已将用户解除拉黑，请刷新页面!";
+		default:
+			return "不合理的Method = " + method +"值!";
+		}
 	}
 	
 	
