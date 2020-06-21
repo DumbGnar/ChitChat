@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.model.Message;
 import com.example.demo.model.NetMessage;
 import com.example.demo.service.MessageService;
+import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -76,10 +77,23 @@ public class MessageController {
         messagingTemplate.convertAndSend(destination, message);
     }
 
+    // 主动方发送好友申请
     @MessageMapping("/add-friend")
     public void addFriend(@Payload Message message) {
         mongoTemplate.save(message);
         String destination = "/uni/add/" + message.getToId();
         messagingTemplate.convertAndSend(destination, message);
+    }
+
+    // 被动方处理好友申请
+    @PostMapping("/verify-friend")
+    public void verifyFriend(@Payload Message message) {
+        mongoTemplate.save(message);
+        String destination = "/uni/add/" + message.getToId();
+        messagingTemplate.convertAndSend(destination, message);
+        if(message.getContent() == "accept"){
+            UserService.becomeFriends(message.getFromId(), message.getToId());
+        }
+        // content=="reject" 则无数据库操作
     }
 }
