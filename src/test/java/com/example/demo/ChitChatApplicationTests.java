@@ -4,8 +4,6 @@ import com.example.demo.service.ImageService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.example.demo.model.User;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
