@@ -45,6 +45,9 @@ public class MessageController {
             if (messages.size() > 0) {
                 Message lastMsg = messages.get(messages.size() - 1);
                 User user = mongoTemplate.findOne(query(where("_id").is(userSetting.getUid())), User.class, "user");
+                if (user == null) {
+                    continue;
+                }
                 chatInfoList.add(new ChatInfo(1, userSetting.getUid(), user.getNickname(), messages.size(),
                         lastMsg.getContent(), lastMsg.getSendTime()));
             }
@@ -56,6 +59,9 @@ public class MessageController {
             if (messages.size() > 0) {
                 Message lastMsg = messages.get(messages.size() - 1);
                 Room room = mongoTemplate.findOne(query(where("_id").is(roomSetting.getRid())), Room.class);
+                if (room == null) {
+                    continue;
+                }
                 chatInfoList.add(new ChatInfo(2, roomSetting.getRid(), room.getRoomname(), messages.size(),
                         lastMsg.getContent(), lastMsg.getSendTime()));
             }

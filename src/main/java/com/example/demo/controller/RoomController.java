@@ -2,12 +2,14 @@ package com.example.demo.controller;
 
 import java.util.ArrayList;
 
+import com.example.demo.model.RoomSetting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,16 +29,21 @@ public class RoomController {
     //表的名字
     private String collection_name = "room";
 
+    @PostMapping("/user/{uid}/add/room/{rid}")
+    public void addRoom(@PathVariable int uid,
+                        @PathVariable int rid) {
+        mongoTemplate.save(new RoomSetting(uid, rid));
+    }
+
     /**
-     * 创建房间接口
-     * @param Uid
-     * @param Roomname
-     * @return
+     *
+     * @param uid
+     * @param name
      */
-    @RequestMapping("room/add/{uid}/{roomname}")//创建完,返回创建者的id
-    public int addRoom(@PathVariable(value = "uid") int Uid, @PathVariable(value = "roomname") String Roomname) {
-        int rid = addRoomProduce(Uid, Roomname);
-        return rid;
+    @RequestMapping("room/add/{uid}/{name}")//创建完,返回创建者的id
+    public void addRoom(@PathVariable int uid,
+                       @PathVariable String name) {
+        mongoTemplate.save(new Room(uid, name));
     }
 
     private int addRoomProduce(int uid, String name) {

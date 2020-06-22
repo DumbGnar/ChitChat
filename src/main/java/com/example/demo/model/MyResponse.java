@@ -3,6 +3,7 @@ package com.example.demo.model;
 public class MyResponse {
 
     private boolean ok;
+
     private String description;
 
     public MyResponse(boolean ok, String description) {
@@ -14,5 +15,4 @@ public class MyResponse {
     public String toString() {
         return ok + ": " + description;
     }
-
 }
