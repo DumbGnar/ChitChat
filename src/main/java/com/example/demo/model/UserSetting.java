@@ -16,9 +16,14 @@ public class UserSetting {
 
     private int uid;
 
-    private Date lastReadTime;
+    private Date lastReadTime = new Date();
 
-    private boolean blacked;
+    private boolean blacked = false;
+
+    public UserSetting(int myId, int uid) {
+        this.myId = myId;
+        this.uid = uid;
+    }
 
     public ObjectId getId() {
         return id;

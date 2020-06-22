@@ -15,7 +15,10 @@ public class Message {
     /**
      * 1: 单聊
      * 2: 群聊
-     * 3: 添加好友
+     * 3: 加好友
+     * 4: 加群
+     * 5: 同意加好友
+     * 6: 同意加群
      */
     private int type;
 
@@ -35,13 +38,19 @@ public class Message {
      */
     private int style;
 
-    /**
-     *  1 已读
-     *  2 未读
-     */
-    private int read = 2;
-
     private String content = "";
+
+    public Message() {
+    }
+
+    public Message(NetMessage netMessage) {
+        this.type = netMessage.getType();
+        this.fromId = netMessage.getFromId();
+        this.toId = netMessage.getToId();
+        this.sendTime = netMessage.getSendTime();
+        this.style = netMessage.getStyle();
+        this.content = netMessage.getContent();
+    }
 
     public Message(int type, int fromId, int toId, String content , int style) {
         this.type = type;
@@ -84,9 +93,4 @@ public class Message {
 	public int getStyle() {
 		return style;
 	}
-
-	public int getRead() {
-		return read;
-	}
-
 }

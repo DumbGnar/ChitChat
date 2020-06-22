@@ -1,17 +1,18 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.ChatInfo;
-import com.example.demo.model.Message;
-import com.example.demo.model.NetMessage;
-import com.example.demo.model.UserSetting;
+import com.example.demo.model.*;
 import com.example.demo.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,6 +31,11 @@ public class MessageController {
         this.mongoTemplate = mongoTemplate;
     }
 
+    /**
+     * 获取myId的会话列表
+     * @param myId
+     * @return
+     */
     @PostMapping("/msg/chatinfo/{myId}")
     public List<ChatInfo> getChatInfoList(@PathVariable int myId) {
         return MessageService.getChatInfoList(myId);
@@ -49,6 +55,9 @@ public class MessageController {
 
     /**
      * 返回用户myId的好友uid发给他的所有未读消息
+     * @param myId
+     * @param uid
+     * @return
      */
     @PostMapping("/msg/user/{myId}/{uid}")
     public List<NetMessage> getUnreadUser(@PathVariable int myId,
@@ -74,43 +83,52 @@ public class MessageController {
         return netMessages;
     }
 
-    @PostMapping("/app/single-chat")
+    @PostMapping("/msg/single-chat")
     public void singleChat(@RequestBody Message message) {
         mongoTemplate.save(message);
         String destination = "/uni/chat/" + message.getToId();
         messagingTemplate.convertAndSend(destination, message);
     }
 
-    @PostMapping("/app/room-chat")
+    @PostMapping("/msg/room-chat")
     public void groupChat(@RequestBody Message message) {
         mongoTemplate.save(message);
         String destination = "/broad/chat/" + message.getToId();
         messagingTemplate.convertAndSend(destination, message);
     }
 
-    // 主动方发送好友申请
-    @PostMapping("/app/add-friend")
-    public void addFriend(@RequestBody Message message) {
-        mongoTemplate.save(message);
-        String destination = "/uni/add/" + message.getToId();
-        messagingTemplate.convertAndSend(destination, message);
+    /**
+     * 主动方添加好友
+     * @param netMessage
+     */
+    @PostMapping("/msg/add-friend")
+    public void addFriend(@RequestBody NetMessage netMessage) {
+        mongoTemplate.save(new Message(netMessage));
+        String destination = "/uni/add/" + netMessage.getToId();
+        messagingTemplate.convertAndSend(destination, netMessage);
     }
 
-    @PostMapping("/app/add-room")
+    @PostMapping("/msg/add-room")
     public void addRoom(@RequestBody NetMessage netMessage) {
 
     }
 
     /**
-     * 处理好友申请
+     * 被动方处理好友申请
      * @param netMessage
      */
-    @PostMapping("/app/verify-friend")
+    @PostMapping("/msg/verify-friend")
     public void verifyFriend(@RequestBody NetMessage netMessage) {
         mongoTemplate.save(new Message(netMessage));
         if ("true".equals(netMessage.getContent())) {
             mongoTemplate.save(new UserSetting(netMessage.getFromId(), netMessage.getToId()));
-            // friendList
+            mongoTemplate.save(new UserSetting(netMessage.getToId(), netMessage.getFromId()));
+            User user1 = mongoTemplate.findOne(query(where("uid").is(netMessage.getFromId())), User.class);
+            User user2 = mongoTemplate.findOne(query(where("uid").is(netMessage.getToId())), User.class);
+            user1.getFriendList().add(user2.getUID());
+            user2.getFriendList().add(user1.getUID());
+            mongoTemplate.save(user1);
+            mongoTemplate.save(user2);
         }
         String destination = "/uni/add/" + netMessage.getToId();
         messagingTemplate.convertAndSend(destination, netMessage);
