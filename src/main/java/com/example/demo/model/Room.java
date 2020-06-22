@@ -1,46 +1,40 @@
 package com.example.demo.model;
-
 import java.util.ArrayList;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document
+@Document(collection = "test_room")
 public class Room {
-
-    /**
-     * 房间号
-     */
     @Id
-    private int Rid;
+    private int Rid;//房间号
+    
+    private ArrayList<Integer> Allusers;//所有聊天室的成员id
+    private ArrayList<Integer> Freeusers;//免打扰的成员id
+    private String Roomname;//房间昵称
+    private ArrayList<String> Announcement;//房间公告
+    private ArrayList<Message> Messages;//消息
 
-    /**
-     * 所有聊天室的成员id
-     */
-    private ArrayList<Integer> Allusers;
-
-    /**
-     * 免打扰的成员id
-     */
-    private ArrayList<Integer> Freeusers;
-
-    /**
-     * 房间昵称
-     */
-    private String Roomname;
-
-    /**
-     * 房间公告
-     */
-    private ArrayList<String> Announcement;
-
-    private ArrayList<Message> Messages;
-
-    public Room(int uid, String name) {
-        this.Allusers.add(Integer.valueOf(uid));
-        this.Roomname = name;
+    public Room() 
+    {
+    	
     }
+    public Room(String name,int rid) {
+    	
+    	this.Allusers = new ArrayList<Integer>();
+    	this.Freeusers = new ArrayList<Integer>();
+    	this.Announcement = new ArrayList<String>();
+    	this.Messages = new ArrayList<Message>();
 
+        this.Roomname = name;
+        this.Rid = rid;
+       
+        
+    }
+    
+    public void setRid(int rid) {
+		this.Rid = rid;
+	}
     public int getRid() {
         return this.Rid;
     }

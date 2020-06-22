@@ -3,7 +3,19 @@ package com.example.demo;
 import com.example.demo.service.ImageService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+import com.example.demo.controller.RoomController;
+import com.example.demo.controller.UserController;
+import com.example.demo.model.Room;
+import com.example.demo.model.User;
+
+=======
+>>>>>>> 20518fadc63b61fd80894af12a37fe6dbb41ac8c
+=======
+>>>>>>> 20518fadc63b61fd80894af12a37fe6dbb41ac8c
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,13 +31,38 @@ public class ChitChatApplicationTests {
         return Base64.getEncoder().encodeToString(imageBytes);
     }
 
-    @Test
-    void testSaveBase64Image() {
-        try {
-            String encodedBase64Image = encodeImage("/Users/hzy/Desktop/spring.jpg");
-            ImageService.saveBase64Image(encodedBase64Image, "/Users/hzy/Desktop/spring-2.jpg");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+  
+//    void testSaveBase64Image() {
+//        try {
+//            String encodedBase64Image = encodeImage("/Users/hzy/Desktop/spring.jpg");
+//            ImageService.saveBase64Image(encodedBase64Image, "/Users/hzy/Desktop/spring-2.jpg");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//    @Test
+//    void test()
+//    {
+//    	 RoomController  a = new RoomController();
+//    	 a.addRoom(1,"fff");
+//    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
