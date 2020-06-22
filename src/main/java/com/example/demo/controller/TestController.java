@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.User;
 
+/**
+ * 测试接口 👌
+ */
 @RestController
 public class TestController {
 	
@@ -18,5 +21,4 @@ public class TestController {
 	public String say() {
 		return "Yes, Indeed\n";
 	}
-	
 }
