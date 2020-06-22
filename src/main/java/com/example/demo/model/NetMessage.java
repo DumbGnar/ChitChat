@@ -7,11 +7,12 @@ import java.util.Date;
  * 1. 当需要向某个好友发送单聊消息时，type为1，fromId填入当前用户uid，toId填入好友uid。<br><br>
  * 2. 当需要在某个群内发送群聊消息时，type为2，fromId填入当前用户uid，toId填入群rid。<br><br>
  * 3. 当需要添加某个人为好友时，type为3，fromId填入当前用户uid，toId填入搜索后得到的uid。<br><br>
- * 4. 当需要加入某个群时，type为4，fromId填入当前用户uid，toId填入搜索后得到的rid。<br><br>
+ * 4. 当需要邀请好友加入某个群时，type为4，fromId填入当前用户uid，toId填入好友uid。<br><br>
  * 5. 当收到加好友请求并作出应答时，type为5，fromId和toId与加好友消息中的相反。<br><br>
  * 6. 当收到加群请求并作出应答时（群主和管理员），type为6，fromId和toId与加群消息中的相反。<br><br>
  * 7. 关于style和content：type为1、2时，style为1时content是文本内容，style为2时content是图片完整URL；<br><br>
- *    type为3、4时，style为1，content为验证消息；type为5、6时，style为1，content为"true"或"false"（String类型）。
+ *    type为3时，style为1，content为验证消息；type为4时，style为1，content为rid；<br><br>
+ *    type为5、6时，style为1，content为"true"或"false"（String类型）。
  */
 public class NetMessage {
 
@@ -20,7 +21,7 @@ public class NetMessage {
      * 1 单聊，
      * 2 群聊，
      * 3 加好友，
-     * 4 加群，
+     * 4 邀请进群，
      * 5 同意/拒绝加好友，
      * 6 同意/拒绝加群
      */

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.service.UserService;
 
-@Document(collection = "test_user")
+@Document
 public class User {
 	@ Id
 	private int UID;	//主键

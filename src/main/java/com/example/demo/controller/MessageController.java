@@ -39,16 +39,12 @@ public class MessageController {
     @PostMapping("/msg/chatinfo/{myId}")
     public List<ChatInfo> getChatInfoList(@PathVariable int myId) {
         List<ChatInfo> chatInfoList = new ArrayList<>();
-        List<UserSetting> userSettingList = new ArrayList<>();
-        userSettingList = mongoTemplate.find(query(where("myId").is(myId)), UserSetting.class);
+        List<UserSetting> userSettingList = mongoTemplate.find(query(where("myId").is(myId)), UserSetting.class);
         for (UserSetting userSetting : userSettingList) {
-            List<Message> messages = getUnreadMessage(userSetting.getMyId(), userSetting.getUid(), userSetting.getLastReadTime());
+            List<Message> messages = getUnreadUserMessage(userSetting.getMyId(), userSetting.getUid(), userSetting.getLastReadTime());
             if (messages.size() > 0) {
                 Message lastMsg = messages.get(messages.size() - 1);
-                User user = mongoTemplate.findOne(query(where("_id").is(userSetting.getUid())), User.class);
-                if (user == null) {
-                    continue;
-                }
+                User user = mongoTemplate.findOne(query(where("_id").is(userSetting.getUid())), User.class, "user");
                 chatInfoList.add(new ChatInfo(1, userSetting.getUid(), user.getNickname(), messages.size(),
                         lastMsg.getContent(), lastMsg.getSendTime()));
             }
@@ -56,7 +52,7 @@ public class MessageController {
         List<RoomSetting> roomSettingList = new ArrayList<>();
         roomSettingList = mongoTemplate.find(query(where("myId").is(myId)), RoomSetting.class);
         for (RoomSetting roomSetting : roomSettingList) {
-            List<Message> messages = getUnreadMessage(roomSetting.getMyId(), roomSetting.getRid(), roomSetting.getLastReadTime());
+            List<Message> messages = getUnreadRoomMessage(roomSetting.getMyId(), roomSetting.getRid(), roomSetting.getLastReadTime());
             if (messages.size() > 0) {
                 Message lastMsg = messages.get(messages.size() - 1);
                 Room room = mongoTemplate.findOne(query(where("_id").is(roomSetting.getRid())), Room.class);
@@ -101,7 +97,7 @@ public class MessageController {
     public List<NetMessage> getUnreadUser(@PathVariable int myId,
                                           @PathVariable int uid) {
         Date lastReadTime = getUserLastRead(myId, uid);
-        List<Message> messages = getUnreadMessage(myId, uid, lastReadTime);
+        List<Message> messages = getUnreadUserMessage(myId, uid, lastReadTime);
         List<NetMessage> netMessages = new ArrayList<>();
         for (Message msg : messages) {
             netMessages.add(new NetMessage(msg));
@@ -119,7 +115,7 @@ public class MessageController {
     public List<NetMessage> getUnreadRoom(@PathVariable int myId,
                                           @PathVariable int rid) {
         Date lastReadTime = getRoomLastRead(myId, rid);
-        List<Message> messages = getUnreadMessage(myId, rid, lastReadTime);
+        List<Message> messages = getUnreadRoomMessage(myId, rid, lastReadTime);
         List<NetMessage> netMessages = new ArrayList<>();
         for (Message msg : messages) {
             netMessages.add(new NetMessage(msg));
@@ -152,9 +148,15 @@ public class MessageController {
         messagingTemplate.convertAndSend(destination, netMessage);
     }
 
+    /**
+     * 邀请好友进群
+     * @param netMessage 邀请消息
+     */
     @PostMapping("/msg/add-room")
     public void addRoom(@RequestBody NetMessage netMessage) {
-
+        mongoTemplate.save(new Message(netMessage));
+        String destination = "/uni/add" + netMessage.getToId();
+        messagingTemplate.convertAndSend(destination, netMessage);
     }
 
     /**
@@ -179,15 +181,29 @@ public class MessageController {
     }
 
     /**
-     * 获取好友id或群id发给用户myId的在lastReadTime之后发送的消息。
+     * 获取好友id发给用户myId的在lastReadTime之后发送的消息。
      * @param myId 我的ID
-     * @param id 好友id或群id
+     * @param id 好友id
      * @param lastReadTime 上次阅读的时间
      * @return 未读消息列表
      */
-    public List<Message> getUnreadMessage(int myId, int id, Date lastReadTime) {
+    public List<Message> getUnreadUserMessage(int myId, int id, Date lastReadTime) {
         List<Message> messageList = new ArrayList<>();
-        messageList = mongoTemplate.find(query(where("fromId").is(id).and("toId").is(myId).and("sendTime").gte(lastReadTime))
+        messageList = mongoTemplate.find(query(where("type").is(1).and("fromId").is(id).and("toId").is(myId).and("sendTime").gte(lastReadTime))
+                .with(Sort.by("sendTime").ascending()), Message.class);
+        return messageList;
+    }
+
+    /**
+     * 获取群id发给用户myId的在lastReadTime之后发送的消息。
+     * @param myId 我的ID
+     * @param id 群id
+     * @param lastReadTime 上次阅读的时间
+     * @return 未读消息列表
+     */
+    public List<Message> getUnreadRoomMessage(int myId, int id, Date lastReadTime) {
+        List<Message> messageList = new ArrayList<>();
+        messageList = mongoTemplate.find(query(where("type").is(2).and("fromId").is(id).and("toId").is(myId).and("sendTime").gte(lastReadTime))
                 .with(Sort.by("sendTime").ascending()), Message.class);
         return messageList;
     }

@@ -42,4 +42,28 @@ public class ChatInfo {
         this.latestContent = latestContent;
         this.latestTime = latestTime;
     }
+
+    public int getType() {
+        return type;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getUnreadNumber() {
+        return unreadNumber;
+    }
+
+    public String getLatestContent() {
+        return latestContent;
+    }
+
+    public Date getLatestTime() {
+        return latestTime;
+    }
 }

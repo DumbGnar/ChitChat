@@ -5,19 +5,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
 import com.example.demo.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.stereotype.Component;
 
 public class UserService {
 	//public static String baseUserImagePath = "D:\\testimage";		//用户的各种图像，包括头像，表情包的总基地址
@@ -40,7 +36,7 @@ public class UserService {
 		}
 	}
 	
-	//遍历images下所有文件夹，返回最大UID的值，一般来说这个是除了User部分别的用不到的
+	// 遍历images下所有文件夹，返回最大UID的值，一般来说这个是除了User部分别的用不到的
 	public static int getMaxUID() {
 		int res = -1;
 		File base = new File(baseUserImagePath);
