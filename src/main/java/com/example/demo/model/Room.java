@@ -2,14 +2,7 @@ package com.example.demo.model;
 import java.util.ArrayList;
 
 import org.springframework.data.annotation.Id;
-
-
-
-import java.util.ArrayList;
-
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 
 @Document(collection = "test_room")
 public class Room {

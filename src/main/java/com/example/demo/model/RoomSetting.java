@@ -16,7 +16,12 @@ public class RoomSetting {
 
     private int rid;
 
-    private Date lastReadTime;
+    private Date lastReadTime = new Date();
+
+    public RoomSetting(int myId, int rid) {
+        this.myId = myId;
+        this.rid = rid;
+    }
 
     public ObjectId getId() {
         return id;

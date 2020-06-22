@@ -2,12 +2,14 @@ package com.example.demo.controller;
 
 import java.util.ArrayList;
 
+import com.example.demo.model.RoomSetting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,7 +35,7 @@ public class RoomController{
 	
 	//创建房间接口
 	@RequestMapping("room/add/{uid}/{roomname}")//创建完,返回创建者的id
-	public int addRoom(@PathVariable(value = "uid")int uid,@PathVariable(value = "roomname")String Roomname){
+	public int addRoomMy(@PathVariable(value = "uid")int uid,@PathVariable(value = "roomname")String Roomname){
 		int max_rid = 0;
 		int max_index = this.mongoTemplate.findAll(Room.class, collection_name).size()-1;//找到最后一条记录下标
 		if(max_index >= 0)
@@ -271,6 +273,7 @@ public class RoomController{
 		}
 		return true;
 	}
+
 	private void deleteroomuserProduce(int rid,int uid) throws Exception{
 		//判断是否存在该房间
 		Room tobeDeleted = this.mongoTemplate.findOne(new Query(Criteria.where("_id").is(rid)), Room.class, this.collection_name);
@@ -283,10 +286,22 @@ public class RoomController{
 		this.mongoTemplate.updateFirst(query, update, User.class, this.collection_name);
 	}
 
-	 
+    @PostMapping("/user/{uid}/add/room/{rid}")
+    public void addRoom(@PathVariable int uid,
+                        @PathVariable int rid) {
+        mongoTemplate.save(new RoomSetting(uid, rid));
+    }
 
-
-
+    /**
+     *
+     * @param uid
+     * @param name
+     */
+    @RequestMapping("room/add/{uid}/{name}")//创建完,返回创建者的id
+    public void addRoom(@PathVariable int uid,
+                       @PathVariable String name) {
+        mongoTemplate.save(new Room(uid, name));
+    }
 }
 
 
