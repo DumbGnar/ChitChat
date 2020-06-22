@@ -18,25 +18,35 @@ public class MessageService {
 
     public static List<ChatInfo> getChatInfoList(int myId) {
         List<ChatInfo> chatInfoList = new ArrayList<>();
-        List<UserSetting> userSettingList = mongoTemplate.find(query(where("myId").is(myId)), UserSetting.class);
-        List<RoomSetting> roomSettingList = mongoTemplate.find(query(where("myId").is(myId)), RoomSetting.class);
-        for (UserSetting userSetting : userSettingList) {
-            List<Message> messages = getUnreadMessage(userSetting.getMyId(), userSetting.getUid(), userSetting.getLastReadTime());
-            if (messages.size() > 0) {
-                Message lastMsg = messages.get(messages.size() - 1);
-                User user = mongoTemplate.findOne(query(where("uid").is(userSetting.getUid())), User.class);
-                chatInfoList.add(new ChatInfo(userSetting.getUid(), user.getNickname(), messages.size(),
-                        lastMsg.getContent(), lastMsg.getSendTime()));
+        List<UserSetting> userSettingList = new ArrayList<>();
+        try {
+            userSettingList = mongoTemplate.find(query(where("myId").is(myId)), UserSetting.class);
+            for (UserSetting userSetting : userSettingList) {
+                List<Message> messages = getUnreadMessage(userSetting.getMyId(), userSetting.getUid(), userSetting.getLastReadTime());
+                if (messages.size() > 0) {
+                    Message lastMsg = messages.get(messages.size() - 1);
+                    User user = mongoTemplate.findOne(query(where("uid").is(userSetting.getUid())), User.class);
+                    chatInfoList.add(new ChatInfo(1, userSetting.getUid(), user.getNickname(), messages.size(),
+                            lastMsg.getContent(), lastMsg.getSendTime()));
+                }
             }
+        } catch (Exception e) {
+            System.out.println("MessageService.getChatInfoList: UserSetting not found");
         }
-        for (RoomSetting roomSetting : roomSettingList) {
-            List<Message> messages = getUnreadMessage(roomSetting.getMyId(), roomSetting.getRid(), roomSetting.getLastReadTime());
-            if (messages.size() > 0) {
-                Message lastMsg = messages.get(messages.size() - 1);
-                Room room = mongoTemplate.findOne(query(where("rid").is(roomSetting.getRid())), Room.class);
-                chatInfoList.add(new ChatInfo(roomSetting.getRid(), room.getRoomname(), messages.size(),
-                        lastMsg.getContent(), lastMsg.getSendTime()));
+        List<RoomSetting> roomSettingList = new ArrayList<>();
+        try {
+            roomSettingList = mongoTemplate.find(query(where("myId").is(myId)), RoomSetting.class);
+            for (RoomSetting roomSetting : roomSettingList) {
+                List<Message> messages = getUnreadMessage(roomSetting.getMyId(), roomSetting.getRid(), roomSetting.getLastReadTime());
+                if (messages.size() > 0) {
+                    Message lastMsg = messages.get(messages.size() - 1);
+                    Room room = mongoTemplate.findOne(query(where("rid").is(roomSetting.getRid())), Room.class);
+                    chatInfoList.add(new ChatInfo(2, roomSetting.getRid(), room.getRoomname(), messages.size(),
+                            lastMsg.getContent(), lastMsg.getSendTime()));
+                }
             }
+        } catch (Exception e) {
+            System.out.println("MessageService.getChatInfoList: RoomSetting not found");
         }
         return chatInfoList;
     }

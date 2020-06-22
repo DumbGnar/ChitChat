@@ -3,23 +3,21 @@ package com.example.demo.controller;
 import com.example.demo.model.ChatInfo;
 import com.example.demo.model.Message;
 import com.example.demo.model.NetMessage;
+import com.example.demo.model.UserSetting;
 import com.example.demo.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-@Controller
+@RestController
 public class MessageController {
 
     private final SimpMessagingTemplate messagingTemplate;
@@ -32,7 +30,6 @@ public class MessageController {
         this.mongoTemplate = mongoTemplate;
     }
 
-    @ResponseBody
     @PostMapping("/msg/chatinfo/{myId}")
     public List<ChatInfo> getChatInfoList(@PathVariable int myId) {
         return MessageService.getChatInfoList(myId);
@@ -53,7 +50,6 @@ public class MessageController {
     /**
      * 返回用户myId的好友uid发给他的所有未读消息
      */
-    @ResponseBody
     @PostMapping("/msg/user/{myId}/{uid}")
     public List<NetMessage> getUnreadUser(@PathVariable int myId,
                                           @PathVariable int uid) {
@@ -66,7 +62,6 @@ public class MessageController {
         return netMessages;
     }
 
-    @ResponseBody
     @PostMapping("/msg/room/{myId}/{rid}")
     public List<NetMessage> getUnreadRoom(@PathVariable int myId,
                                           @PathVariable int rid) {
@@ -79,24 +74,45 @@ public class MessageController {
         return netMessages;
     }
 
-    @MessageMapping("/single-chat")
-    public void singleChat(@Payload Message message) {
+    @PostMapping("/app/single-chat")
+    public void singleChat(@RequestBody Message message) {
         mongoTemplate.save(message);
         String destination = "/uni/chat/" + message.getToId();
         messagingTemplate.convertAndSend(destination, message);
     }
 
-    @MessageMapping("/room-chat")
-    public void groupChat(@Payload Message message) {
+    @PostMapping("/app/room-chat")
+    public void groupChat(@RequestBody Message message) {
         mongoTemplate.save(message);
         String destination = "/broad/chat/" + message.getToId();
         messagingTemplate.convertAndSend(destination, message);
     }
 
-    @MessageMapping("/add-friend")
-    public void addFriend(@Payload Message message) {
+    // 主动方发送好友申请
+    @PostMapping("/app/add-friend")
+    public void addFriend(@RequestBody Message message) {
         mongoTemplate.save(message);
         String destination = "/uni/add/" + message.getToId();
         messagingTemplate.convertAndSend(destination, message);
+    }
+
+    @PostMapping("/app/add-room")
+    public void addRoom(@RequestBody NetMessage netMessage) {
+
+    }
+
+    /**
+     * 处理好友申请
+     * @param netMessage
+     */
+    @PostMapping("/app/verify-friend")
+    public void verifyFriend(@RequestBody NetMessage netMessage) {
+        mongoTemplate.save(new Message(netMessage));
+        if ("true".equals(netMessage.getContent())) {
+            mongoTemplate.save(new UserSetting(netMessage.getFromId(), netMessage.getToId()));
+            // friendList
+        }
+        String destination = "/uni/add/" + netMessage.getToId();
+        messagingTemplate.convertAndSend(destination, netMessage);
     }
 }
