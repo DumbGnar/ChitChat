@@ -89,7 +89,7 @@ public class ImageController {
 
     /**
      * 上传图片 👌
-     * @param map {"image": "<Base64字符串>"}
+     * @param map {"image": "Base64字符串"}
      * @param uid 用户uid
      * @param type 1：头像，2：表情，3：图片缓存
      * @return 上传成功：日期字符串；上传失败：提示信息。
