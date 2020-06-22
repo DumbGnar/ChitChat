@@ -319,4 +319,33 @@ public class UserController {
         res.addAll(result);
         return res;
     }
+    
+    /**
+     * 返回用户联系人或者黑名单列表,没有则返回空列表，出错返回null
+     *
+     * @param uid 根据uid返回list
+     * @param type 1:返回联系人（好友列表） 2.返回黑名单
+     * @return
+     */
+    @RequestMapping("user/getlist/{uid}/{type}")
+    public ArrayList<User> getList(@PathVariable(value = "uid")Integer uid,
+    								@PathVariable(value = "type")Integer type) {
+    	ArrayList<User> res = new ArrayList<User>();
+    	User me = this.mongoTemplate.findOne(new Query(Criteria.where("_id").is(uid)), User.class, this.collection_name);
+    	ArrayList<Integer> iteration = new ArrayList<Integer>();
+    	switch(type) {
+    	case 1:
+    		iteration = me.getFriendList();
+    		break;
+    	case 2:
+    		iteration = me.getBlackList();
+    		break;
+    	default:
+    		return null;
+    	}
+    	for(Integer i : iteration) {
+    		res.add(this.mongoTemplate.findOne(new Query(Criteria.where("_id").is(i)), User.class, this.collection_name));
+    	}
+    	return res;
+    }
 }
