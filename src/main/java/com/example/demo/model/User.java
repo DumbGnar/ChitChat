@@ -15,6 +15,7 @@ import com.example.demo.service.UserService;
 public class User {
 	@ Id
 	private int UID;	//主键
+	
 	private int age;	//年龄
 	private ArrayList<Integer> blackList;	//黑名单
 	private ArrayList<Integer> friendList;	//好友列表

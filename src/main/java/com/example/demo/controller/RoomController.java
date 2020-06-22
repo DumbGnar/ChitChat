@@ -20,21 +20,28 @@ public class RoomController{
 	
 	@Autowired
 	private MongoTemplate mongoTemplate;
+	
+	
 	//表的名字
-	private String collection_name = "room";
+	private String collection_name = "test_room";
 	
 	
 	//创建房间接口
 	@RequestMapping("room/add/{uid}/{roomname}")//创建完,返回创建者的id
-	public int addRoom(@PathVariable(value = "uid")int Uid,@PathVariable(value = "roomname")String Roomname) {
-			
-		int rid  = addRoomProduce(Uid,Roomname);
-		
+	public int addRoom(@PathVariable(value = "uid")int uid,@PathVariable(value = "roomname")String Roomname){
+		int max_rid = 0;
+		int max_index = this.mongoTemplate.findAll(Room.class, collection_name).size()-1;//找到最后一条记录下标
+		if(max_index >= 0)
+		{
+		max_rid = this.mongoTemplate.findAll(Room.class, collection_name).get(max_index).getRid()+1;//获取最后一条记录的rid++
+		}	
+		int rid  = addRoomProduce(uid,Roomname,max_rid);	
 		return rid;
 	}
-	private int addRoomProduce(int uid,String name){		
-	Room tobeAdded = new Room(uid,name);
-	mongoTemplate.insert(tobeAdded,collection_name);
+	private int addRoomProduce(int uid,String name,int max_rid){		
+	Room tobeAdded = new Room(name,max_rid);
+	tobeAdded.addAllusers(uid);
+	mongoTemplate.insert(tobeAdded,this.collection_name);
 	return tobeAdded.getRid();
 	}
 	
@@ -52,10 +59,13 @@ public class RoomController{
 	}
 	private void deleteroomProduce(int rid) throws Exception{
 		//判断是否存在该房间
-		Room tobeDeleted = this.mongoTemplate.findOne(new Query(Criteria.where("_id").is(rid)), Room.class, this.collection_name);
-		if(tobeDeleted == null) throw new Exception();
+		Room tobeDeleted = this.mongoTemplate.findOne(new Query(Criteria.where("Rid").is(rid)), Room.class, "test_room");
+		if(tobeDeleted == null) 
+		{
+			throw new Exception();
+		}
 		
-		this.mongoTemplate.remove(new Query(Criteria.where("_id").is(rid)), Room.class, this.collection_name);
+		this.mongoTemplate.remove(new Query(Criteria.where("Rid").is(rid)), Room.class, "test_room");
 		//image cache folder not deleted with user
 	}
 	
@@ -64,7 +74,7 @@ public class RoomController{
 	@RequestMapping("room/viewmessages/{rid}")//返回Message ArrayList
 	public ArrayList<Message> viewmessages(@PathVariable(value = "rid")int rid){
 		
-		Query query = new Query(Criteria.where("_id").is(rid));
+		Query query = new Query(Criteria.where("Rid").is(rid));
 		
 		return this.mongoTemplate.findOne(query, Room.class, this.collection_name).getMessages();
 	}
@@ -85,20 +95,21 @@ public class RoomController{
 	}
 	private void sendmessageProduce(int rid,int uid,int style,String content) throws Exception{
 		//判断是否存在该房间
-		Room sended = this.mongoTemplate.findOne(new Query(Criteria.where("_id").is(rid)), Room.class, this.collection_name);
+		Room sended = this.mongoTemplate.findOne(new Query(Criteria.where("Rid").is(rid)), Room.class, this.collection_name);
 		if(sended == null) throw new Exception();
 		
-		Query query = new Query(Criteria.where("_id").is(rid));
+		Query query = new Query(Criteria.where("Rid").is(rid));
 		//将信息添加进消息记录去
 		Update update = new Update();
         update.set("Messages",sended.addMessages(2, uid,rid, content, style));
 		this.mongoTemplate.updateFirst(query, update, Room.class, this.collection_name);
 	}
+	
 	//查看公告接口
 	@RequestMapping("room/viewannouncement/{rid}")//返回uid ArrayList
 	public ArrayList<String> announcement(@PathVariable(value = "rid")int rid){
 		
-		Query query = new Query(Criteria.where("_id").is(rid));
+		Query query = new Query(Criteria.where("Rid").is(rid));
 		
 		return this.mongoTemplate.findOne(query, Room.class, this.collection_name).getAnnouncement();
 	}
@@ -117,10 +128,10 @@ public class RoomController{
 	} 
 	private void addannouncementProduce(int rid,String announcement) throws Exception{
 		//判断是否存在该房间
-		Room added = this.mongoTemplate.findOne(new Query(Criteria.where("_id").is(rid)), Room.class, this.collection_name);
+		Room added = this.mongoTemplate.findOne(new Query(Criteria.where("Rid").is(rid)), Room.class, this.collection_name);
 		if(added== null) throw new Exception();
 		
-		Query query = new Query(Criteria.where("_id").is(rid));
+		Query query = new Query(Criteria.where("Rid").is(rid));
 
 		Update update = new Update();
 		update.set("Announcement",added.addAnnouncement(announcement));
@@ -132,7 +143,7 @@ public class RoomController{
 	@RequestMapping("room/viewroomname/{rid}")//返回String Roomname
 	public String viewroomname(@PathVariable(value = "rid")int rid){
 		
-		Query query = new Query(Criteria.where("_id").is(rid));
+		Query query = new Query(Criteria.where("Rid").is(rid));
 		
 		return this.mongoTemplate.findOne(query, Room.class, this.collection_name).getRoomname();
 		

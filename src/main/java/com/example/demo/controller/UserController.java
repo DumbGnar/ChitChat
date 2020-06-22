@@ -157,7 +157,7 @@ public class UserController {
 		//create a default head.jpg in folder
 		UserService.setUserToDefaultHeadtrait(tobeAdded.getUID(), UserService.HEAD_DEFAULT);
 		//user collection 
-		this.mongoTemplate.insert(tobeAdded);
+		this.mongoTemplate.insert(tobeAdded,this.collection_name);
 	}
 	
 	
