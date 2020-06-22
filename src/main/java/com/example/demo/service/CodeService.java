@@ -15,12 +15,10 @@ public class CodeService {
         return sb.toString();
     }
 
-    
     public static synchronized void addCodeMap(String email, String code) {
         codeMap.put(email, code);
     }
 
-    
     public static synchronized boolean checkCode(String email, String code) {
         if (!codeMap.containsKey(email) || !codeMap.get(email).equals(code)) {
             return false;
@@ -29,5 +27,4 @@ public class CodeService {
             return true;
         }
     }
-
 }

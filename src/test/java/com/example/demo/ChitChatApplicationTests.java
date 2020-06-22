@@ -5,11 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+<<<<<<< HEAD
 import com.example.demo.controller.RoomController;
 import com.example.demo.controller.UserController;
 import com.example.demo.model.Room;
 import com.example.demo.model.User;
 
+=======
+>>>>>>> 20518fadc63b61fd80894af12a37fe6dbb41ac8c
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

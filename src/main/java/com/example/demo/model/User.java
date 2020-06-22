@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.service.UserService;
 
-@Document(collection = "test_user")
+@Document
 public class User {
 	@ Id
 	private int UID;	//主键
@@ -89,8 +89,13 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
-	
+
+	// 列表添加一个好友
+	public ArrayList<Integer> addOneFriend(int uid){
+	    this.friendList.add(Integer.valueOf(uid));
+	    return this.friendList;
+    }
+
 	//构造方法
 	@PersistenceConstructor
 	public User(String loginID, String password) {	//至少要提供用户名和密码

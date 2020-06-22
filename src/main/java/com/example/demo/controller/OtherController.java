@@ -1,14 +1,15 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.MyResponse;
-import com.example.demo.model.User;
 import com.example.demo.service.CodeService;
 import com.example.demo.service.MailService;
-import com.example.demo.service.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 其他未分类的接口 👌
+ */
 @RestController
 public class OtherController {
 

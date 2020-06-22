@@ -5,19 +5,24 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Component;
+import com.example.demo.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 public class UserService {
 	//public static String baseUserImagePath = "D:\\testimage";		//用户的各种图像，包括头像，表情包的总基地址
 	public static String baseUserImagePath = "/home/ubuntu/ChitChat/back/images";
 	
 	public static int counts = UserService.getMaxUID();	//计数，分配User的uid
+
+	@Autowired
+	private static MongoTemplate mongoTemplate;
 	
 	//根据用户的UID返回其头像在服务器目录地址，通过new一个File(返回地path)来获取对头像head.jpg的引用；欢迎使用
 	public static BufferedImage getHeadPortraitByID(int id) {
@@ -31,7 +36,7 @@ public class UserService {
 		}
 	}
 	
-	//遍历images下所有文件夹，返回最大UID的值，一般来说这个是除了User部分别的用不到的
+	// 遍历images下所有文件夹，返回最大UID的值，一般来说这个是除了User部分别的用不到的
 	public static int getMaxUID() {
 		int res = -1;
 		File base = new File(baseUserImagePath);
@@ -87,5 +92,25 @@ public class UserService {
 	    fos.close(); // 后开先关
 	    fis.close(); // 先开后关  
 	}
-	
+
+	/**
+	 * 互加好友
+	 * 被MessageController的verifyFriend()调用
+	 */
+	public static void becomeFriends(int fromUid, int toUid) {
+		try{
+			addFriendProduce(fromUid, toUid);
+			addFriendProduce(toUid, fromUid);
+		} catch (Exception e) {
+			System.out.println("ADDFRIEND ERROR\n");
+		}
+	}
+
+	private static void addFriendProduce(int meUid, int friendUid) throws Exception {
+		Query query = new Query(Criteria.where("_id").is(meUid));
+		User me = mongoTemplate.findOne(query, User.class);
+		if(me == null) throw new Exception();
+		Update update = new Update().set("friendList", me.addOneFriend(friendUid));
+		mongoTemplate.updateFirst(query, update, User.class);
+	}
 }

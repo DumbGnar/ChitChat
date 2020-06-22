@@ -15,7 +15,11 @@ import com.example.demo.model.Message;
 import com.example.demo.model.Room;
 import com.example.demo.model.User;
 
+/**
+ * 群相关接口 ❌
+ */
 @RestController
+
 public class RoomController{
 	
 	@Autowired
@@ -279,7 +283,10 @@ public class RoomController{
 	}
 
 	 
+
+
 }
+
 
 
 

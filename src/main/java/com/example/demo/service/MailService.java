@@ -8,6 +8,7 @@ import java.security.GeneralSecurityException;
 import java.util.Properties;
 
 public class MailService {
+
     /**
      * 发件人邮箱地址 chitchat_team@yeah.net
      * @param recipient 用户的邮箱地址
@@ -19,6 +20,10 @@ public class MailService {
         Properties properties = System.getProperties();
         properties.setProperty("mail.smtp.host", "smtp.yeah.net");
         properties.put("mail.smtp.auth", "true");
+        MailSSLSocketFactory socketFactory = new MailSSLSocketFactory();
+        socketFactory.setTrustAllHosts(true);
+        properties.put("mail.smtp.ssl.enable", "true");
+        properties.put("mail.smtp.ssl.socketFactory", socketFactory);
         Session session = Session.getDefaultInstance(properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -33,9 +38,5 @@ public class MailService {
         mimeMessage.setSubject("欢迎使用ChitChat~");
         mimeMessage.setText("您的验证码是：" + code);
         Transport.send(mimeMessage);
-//        MailSSLSocketFactory socketFactory = new MailSSLSocketFactory();
-//        socketFactory.setTrustAllHosts(true);
-//        properties.put("mail.smtp.ssl.enable", "true");
-//        properties.put("mail.smtp.ssl.socketFactory", socketFactory);
     }
 }

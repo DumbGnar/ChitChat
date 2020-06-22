@@ -1,14 +1,10 @@
 package com.example.demo.model;
-
-
-
 import java.util.ArrayList;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.PersistenceConstructor;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.example.demo.service.UserService;
 
 @Document(collection = "test_room")
 public class Room {
@@ -20,10 +16,8 @@ public class Room {
     private ArrayList<Integer> Freeusers;//免打扰的成员id
     private String Roomname;//房间昵称
     private ArrayList<String> Announcement;//房间公告
-    private ArrayList<Message> Messages;
-    private ArrayList<UidMid> uidMids;
+    private ArrayList<Message> Messages;//消息
 
-   
     public Room() 
     {
     	
@@ -34,7 +28,7 @@ public class Room {
     	this.Freeusers = new ArrayList<Integer>();
     	this.Announcement = new ArrayList<String>();
     	this.Messages = new ArrayList<Message>();
-    	this.uidMids = new ArrayList<UidMid>();
+
         this.Roomname = name;
         this.Rid = rid;
        
