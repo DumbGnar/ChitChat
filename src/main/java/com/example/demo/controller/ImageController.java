@@ -21,17 +21,46 @@ public class ImageController {
     private final ImageStorage object = ImageStorage.getInstance();
 
     /**
+     * 删除头像 👌
+     * @param uid 用户ID
+     */
+    @PostMapping("/images/{uid}/head/delete")
+    public void deleteHead(@PathVariable int uid) {
+        String path = UserService.baseUserImagePath + "/" + uid + "/head.jpg";
+        File file = new File(path);
+        file.delete();
+    }
+
+    /**
+     * 删除某个图片缓存 👌
+     * @param uid 用户ID
+     * @param map .get("image") 文件名数组，带后缀.jpg
+     */
+    @PostMapping("/images/{uid}/imagecache/delete")
+    public void deleteImagecache(@PathVariable int uid,
+                                 @RequestBody HashMap<String,List<String>> map) {
+        List<String> fileNames = map.get("image");
+        String path = UserService.baseUserImagePath + "/" + uid + "/imagecache/";
+        for (String fileName : fileNames) {
+            File file = new File(path + fileName);
+            file.delete();
+        }
+    }
+
+    /**
      * 删除某个表情 👌
      * @param uid 用户ID
-     * @param fileName 表情文件名，包括后缀.jpg，与读取表情相对应（也包括后缀.jpg）
-     * @return 是否删除成功
+     * @param map .get("image") 文件名数组，带后缀.jpg
      */
-    @PostMapping("/images/{uid}/faces/{fileName}/delete")
-    public boolean deleteFace(@PathVariable int uid,
-                             @PathVariable String fileName) {
-        String path = UserService.baseUserImagePath + "/" + uid + "/faces/" + fileName;
-        File file = new File(path);
-        return file.delete();
+    @PostMapping("/images/{uid}/faces/delete")
+    public void deleteFace(@PathVariable int uid,
+                           @RequestBody HashMap<String,List<String>> map) {
+        List<String> fileNames = map.get("image");
+        String path = UserService.baseUserImagePath + "/" + uid + "/faces/";
+        for (String fileName : fileNames) {
+            File file = new File(path + fileName);
+            file.delete();
+        }
     }
 
     /**
