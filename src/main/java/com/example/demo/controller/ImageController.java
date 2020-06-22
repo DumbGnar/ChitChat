@@ -6,9 +6,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.example.demo.service.ImageService;
+<<<<<<< HEAD
 
 //import com.example.demo.service.StorageService;
 
+=======
+>>>>>>> 20518fadc63b61fd80894af12a37fe6dbb41ac8c
 import com.example.demo.service.UserService;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +36,7 @@ public class ImageController {
         File file = new File(path);
         file.delete();
     }
+<<<<<<< HEAD
 
     /**
      * 删除某个图片缓存 👌
@@ -51,6 +55,26 @@ public class ImageController {
     }
 
     /**
+=======
+
+    /**
+     * 删除某个图片缓存 👌
+     * @param uid 用户ID
+     * @param map .get("image") 文件名数组，带后缀.jpg
+     */
+    @PostMapping("/images/{uid}/imagecache/delete")
+    public void deleteImagecache(@PathVariable int uid,
+                                 @RequestBody HashMap<String,List<String>> map) {
+        List<String> fileNames = map.get("image");
+        String path = UserService.baseUserImagePath + "/" + uid + "/imagecache/";
+        for (String fileName : fileNames) {
+            File file = new File(path + fileName);
+            file.delete();
+        }
+    }
+
+    /**
+>>>>>>> 20518fadc63b61fd80894af12a37fe6dbb41ac8c
      * 删除某个表情 👌
      * @param uid 用户ID
      * @param map .get("image") 文件名数组，带后缀.jpg
