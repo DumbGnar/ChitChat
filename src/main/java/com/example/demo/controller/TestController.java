@@ -32,8 +32,5 @@ public class TestController {
 	public String say() {
 		return "Yes, Indeed\n";
 	}
-<<<<<<< HEAD
 
-=======
->>>>>>> 20518fadc63b61fd80894af12a37fe6dbb41ac8c
 }

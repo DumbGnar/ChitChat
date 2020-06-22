@@ -22,16 +22,10 @@ import com.example.demo.service.UserService;
  */
 @RestController
 public class UserController {
-<<<<<<< HEAD
-    @Autowired
-    private MongoTemplate mongoTemplate;
-
-=======
 
     @Autowired
     private MongoTemplate mongoTemplate;
 
->>>>>>> 20518fadc63b61fd80894af12a37fe6dbb41ac8c
     /**
      * 进行检索的位于数据库mongoTemplate中的集合名称，测试用的是test_user，正式使用未定
      */
