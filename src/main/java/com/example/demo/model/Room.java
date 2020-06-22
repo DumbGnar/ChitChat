@@ -1,22 +1,40 @@
 package com.example.demo.model;
 
-import dev.morphia.annotations.Id;
-
 import java.util.ArrayList;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "room")
 public class Room {
 
+    /**
+     * 房间号
+     */
     @Id
-    private int Rid;//房间号
-    private ArrayList<Integer> Allusers;//所有聊天室的成员id
-    private ArrayList<Integer> Freeusers;//免打扰的成员id
-    private String Roomname;//房间昵称
-    private ArrayList<String> Announcement;//房间公告
+    private int Rid;
+
+    /**
+     * 所有聊天室的成员id
+     */
+    private ArrayList<Integer> Allusers;
+
+    /**
+     * 免打扰的成员id
+     */
+    private ArrayList<Integer> Freeusers;
+
+    /**
+     * 房间昵称
+     */
+    private String Roomname;
+
+    /**
+     * 房间公告
+     */
+    private ArrayList<String> Announcement;
+
     private ArrayList<Message> Messages;
-    private ArrayList<UidMid> uidMids;
 
     public Room(int uid, String name) {
         this.Allusers.add(Integer.valueOf(uid));
