@@ -29,7 +29,7 @@ public class UserController {
     /**
      * 进行检索的位于数据库mongoTemplate中的集合名称，测试用的是test_user，正式使用未定
      */
-    private String collection_name = "test_user";
+    private String collection_name = "user";
 
     /**
      * 根据用户UID获取用户信息
