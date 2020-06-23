@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.model.Room;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
 
@@ -346,6 +347,20 @@ public class UserController {
     	for(Integer i : iteration) {
     		res.add(this.mongoTemplate.findOne(new Query(Criteria.where("_id").is(i)), User.class, this.collection_name));
     	}
+    	return res;
+    }
+    
+    /**
+     * 返回用户房间列表,没有则返回空列表，出错返回null
+     *
+     * @param uid 根据uid返回list
+     * @return
+     */
+    @RequestMapping("user/getroom/{uid}")
+    public ArrayList<Room> getRoomList(@PathVariable(value = "uid")Integer uid){
+    	ArrayList<Room> res = new ArrayList<Room>();
+    	User me = this.mongoTemplate.findOne(new Query(Criteria.where("_id").is(uid)), User.class, this.collection_name);
+    	res.addAll(this.mongoTemplate.find(new Query(Criteria.where("Allusers").is(uid)), Room.class, "test_room"));
     	return res;
     }
 }
