@@ -31,6 +31,16 @@ public class MessageController {
         this.mongoTemplate = mongoTemplate;
     }
 
+    @RequestMapping("/msg/addinfo/{myId}")
+    public List<NetMessage> getAddInfoMessage(@PathVariable int myId) {
+        List<NetMessage> netMessages = new ArrayList<>();
+        List<Message> messageList = mongoTemplate.find(query(where("toId").is(myId).and("type").is(5)), Message.class);
+        for (Message message : messageList) {
+            netMessages.add(new NetMessage(message));
+        }
+        return netMessages;
+    }
+
     /**
      * 获取myId的会话列表
      * @param myId 用户uid

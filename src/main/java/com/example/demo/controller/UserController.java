@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.demo.model.UserSetting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.model.Room;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 /**
  * 用户相关接口 👌
@@ -256,7 +259,9 @@ public class UserController {
                 this.mongoTemplate.findAllAndRemove(new Query(Criteria.where("_id").is(friend_uid)), User.class, this.collection_name);
                 this.mongoTemplate.insert(me);
                 this.mongoTemplate.insert(friend);
+                this.mongoTemplate.remove(query(where("myId").is(my_uid).and("uid").is(friend_uid)), UserSetting.class);
                 return "您已删除好友。";
+            default:
         }
         return "未知错误，清联系系统管理员";
     }
@@ -350,17 +355,17 @@ public class UserController {
     	return res;
     }
     
-    /**
-     * 返回用户房间列表,没有则返回空列表，出错返回null
-     *
-     * @param uid 根据uid返回list
-     * @return
-     */
-    @RequestMapping("user/getroom/{uid}")
-    public ArrayList<Room> getRoomList(@PathVariable(value = "uid")Integer uid){
-    	ArrayList<Room> res = new ArrayList<Room>();
-    	User me = this.mongoTemplate.findOne(new Query(Criteria.where("_id").is(uid)), User.class, this.collection_name);
-    	res.addAll(this.mongoTemplate.find(new Query(Criteria.where("Allusers").is(uid)), Room.class, "test_room"));
-    	return res;
-    }
+//    /**
+//     * 返回用户房间列表,没有则返回空列表，出错返回null
+//     *
+//     * @param uid 根据uid返回list
+//     * @return
+//     */
+//    @RequestMapping("user/getroom/{uid}")
+//    public ArrayList<Room> getRoomList(@PathVariable(value = "uid")Integer uid){
+//    	ArrayList<Room> res = new ArrayList<Room>();
+//    	User me = this.mongoTemplate.findOne(new Query(Criteria.where("_id").is(uid)), User.class, this.collection_name);
+//    	res.addAll(this.mongoTemplate.find(new Query(Criteria.where("Allusers").is(uid)), Room.class, "test_room"));
+//    	return res;
+//    }
 }
