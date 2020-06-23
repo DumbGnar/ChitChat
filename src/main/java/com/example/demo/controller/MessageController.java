@@ -213,8 +213,8 @@ public class MessageController {
         if ("true".equals(netMessage.getContent())) {
             mongoTemplate.save(new UserSetting(netMessage.getFromId(), netMessage.getToId()));
             mongoTemplate.save(new UserSetting(netMessage.getToId(), netMessage.getFromId()));
-            User user1 = mongoTemplate.findOne(query(where("uid").is(netMessage.getFromId())), User.class);
-            User user2 = mongoTemplate.findOne(query(where("uid").is(netMessage.getToId())), User.class);
+            User user1 = mongoTemplate.findOne(query(where("_id").is(netMessage.getFromId())), User.class);
+            User user2 = mongoTemplate.findOne(query(where("_id").is(netMessage.getToId())), User.class);
             user1.getFriendList().add(user2.getUID());
             user2.getFriendList().add(user1.getUID());
             mongoTemplate.save(user1);
