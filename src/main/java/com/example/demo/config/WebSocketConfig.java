@@ -40,23 +40,23 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.setPreservePublishOrder(true);
     }
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(new ChannelInterceptor() {
-            @Override
-            public Message<?> preSend(Message<?> message, MessageChannel channel) {
-                StompHeaderAccessor accessor =
-                        MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    String uid = (String) accessor.getHeader("uid");
-                    if (StringUtils.isEmpty(uid)) {
-                        return null;
-                    }
-                    Principal principal = new UserPrincipal(uid);
-                    accessor.setUser(principal);
-                }
-                return message;
-            }
-        });
-    }
+//    @Override
+//    public void configureClientInboundChannel(ChannelRegistration registration) {
+//        registration.interceptors(new ChannelInterceptor() {
+//            @Override
+//            public Message<?> preSend(Message<?> message, MessageChannel channel) {
+//                StompHeaderAccessor accessor =
+//                        MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+//                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+//                    String uid = (String) accessor.getHeader("uid");
+//                    if (StringUtils.isEmpty(uid)) {
+//                        return null;
+//                    }
+//                    Principal principal = new UserPrincipal(uid);
+//                    accessor.setUser(principal);
+//                }
+//                return message;
+//            }
+//        });
+//    }
 }

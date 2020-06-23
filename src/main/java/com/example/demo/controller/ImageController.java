@@ -74,7 +74,22 @@ public class ImageController {
     public List<String> getImagecacheFileName(@PathVariable int uid) {
         String dirPath = UserService.baseUserImagePath + "/" + uid + "/imagecache";
         File dir = new File(dirPath);
-        return new ArrayList<String>(Arrays.asList(dir.list()));
+        List<String> fileNameList = new ArrayList<String>(Arrays.asList(dir.list()));
+        List<Date> tmpList = new ArrayList<>();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS");
+        for (String fileName : fileNameList) {
+            try {
+                tmpList.add(formatter.parse(fileName.substring(0, fileName.length() - 4)));
+            } catch (Exception e) {
+                continue;
+            }
+        }
+        Collections.sort(tmpList);
+        fileNameList.clear();
+        for (Date date : tmpList) {
+            fileNameList.add(formatter.format(date));
+        }
+        return fileNameList;
     }
 
     /**
@@ -86,7 +101,65 @@ public class ImageController {
     public List<String> getFacesFileName(@PathVariable int uid) {
         String dirPath = UserService.baseUserImagePath + "/" + uid + "/faces";
         File dir = new File(dirPath);
-        return new ArrayList<String>(Arrays.asList(dir.list()));
+        List<String> fileNameList = new ArrayList<String>(Arrays.asList(dir.list()));
+        List<Date> tmpList = new ArrayList<>();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS");
+        for (String fileName : fileNameList) {
+            try {
+                tmpList.add(formatter.parse(fileName.substring(0, fileName.length() - 4)));
+            } catch (Exception e) {
+                continue;
+            }
+        }
+        Collections.sort(tmpList);
+        fileNameList.clear();
+        for (Date date : tmpList) {
+            fileNameList.add(formatter.format(date));
+        }
+        return fileNameList;
+    }
+
+    /**
+     * 上传图片 👌
+     * @param map {"image": "Base64字符串"}
+     * @param uid 用户uid
+     * @param type 1：头像，2：表情，3：图片缓存
+     * @return 上传成功：日期字符串；上传失败：提示信息。
+     */
+    @PostMapping("/upload/images/{uid}/{type}")
+    public List<String> handleImagesUpload(@RequestBody HashMap<String,List<String>> map,
+                                           @PathVariable int uid,
+                                           @PathVariable int type) {
+        List<String> base64ImageList = map.get("image");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS");
+        List<String> fileNameList = new ArrayList<>();
+        for (String base64Image : base64ImageList) {
+            String path = UserService.baseUserImagePath + "/" + uid + "/";
+            String dateString = formatter.format(new Date());
+            switch (type) {
+                case 1:
+                    // head.jpg
+                    path += "head.jpg";
+                    break;
+                case 2:
+                    // faces/<dateString>.jpg
+                    path += "faces/" + dateString + ".jpg";
+                    break;
+                case 3:
+                    // imagecache/<dateString>.jpg
+                    path += "imagecache/" + dateString + ".jpg";
+                    break;
+                default:
+            }
+            try {
+                ImageService.saveBase64Image(base64Image, path);
+            } catch (Exception e) {
+                System.out.println("save error: " + dateString);
+                continue;
+            }
+            fileNameList.add(dateString);
+        }
+        return fileNameList;
     }
 
     /**
@@ -105,7 +178,7 @@ public class ImageController {
             return "Illegal Base64 image";
         }
         String path = UserService.baseUserImagePath + "/" + uid + "/";
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS");
         String dateString = formatter.format(new Date());
         switch (type) {
             case 1:

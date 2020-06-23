@@ -1,25 +1,15 @@
 package com.example.demo.controller;
 
-
-
 import com.example.demo.model.ChatInfo;
 import com.example.demo.model.Message;
 import com.example.demo.model.NetMessage;
-
-
-
 import com.example.demo.model.*;
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -43,10 +33,10 @@ public class MessageController {
 
     /**
      * 获取myId的会话列表
-     * @param myId
-     * @return
+     * @param myId 用户uid
+     * @return ChatInfo列表
      */
-    @PostMapping("/msg/chatinfo/{myId}")
+    @RequestMapping("/msg/chatinfo/{myId}")
     public List<ChatInfo> getChatInfoList(@PathVariable int myId) {
         List<ChatInfo> chatInfoList = new ArrayList<>();
         List<UserSetting> userSettingList = mongoTemplate.find(query(where("myId").is(myId)), UserSetting.class);
@@ -139,18 +129,32 @@ public class MessageController {
         return netMessages;
     }
 
+    /**
+     * 发送单聊消息
+     * @param netMessage 消息类
+     * @return 发送时间
+     */
     @PostMapping("/msg/single-chat")
-    public void singleChat(@RequestBody Message message) {
+    public Date singleChat(@RequestBody NetMessage netMessage) {
+        Message message = new Message(netMessage);
         mongoTemplate.save(message);
-        String destination = "/uni/chat/" + message.getToId();
-        messagingTemplate.convertAndSend(destination, message);
+        String destination = "/uni/chat/" + netMessage.getToId();
+        messagingTemplate.convertAndSend(destination, netMessage);
+        return message.getSendTime();
     }
 
+    /**
+     * 发送群聊消息
+     * @param netMessage 消息类
+     * @return 发送时间
+     */
     @PostMapping("/msg/room-chat")
-    public void groupChat(@RequestBody Message message) {
+    public Date groupChat(@RequestBody NetMessage netMessage) {
+        Message message = new Message(netMessage);
         mongoTemplate.save(message);
-        String destination = "/broad/chat/" + message.getToId();
-        messagingTemplate.convertAndSend(destination, message);
+        String destination = "/broad/chat/" + netMessage.getToId();
+        messagingTemplate.convertAndSend(destination, netMessage);
+        return message.getSendTime();
     }
 
     /**

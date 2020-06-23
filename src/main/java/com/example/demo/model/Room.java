@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "test_room")
+@Document
 public class Room {
     @Id
     private int Rid;//房间号
