@@ -268,6 +268,8 @@ public class RoomController {
         try {
             addroomuserProduce(rid, uid);
             mongoTemplate.save(new RoomSetting(uid, rid));
+            mongoTemplate.remove(query(where("toId").is(uid).and("content").is(Integer.toString(rid))
+                    .and("type").is(4)), Message.class);
         } catch (Exception e) {
             System.out.println("ADDUSER ERROR\n");
             return false;

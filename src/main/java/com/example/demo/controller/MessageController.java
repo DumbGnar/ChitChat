@@ -31,11 +31,25 @@ public class MessageController {
         this.mongoTemplate = mongoTemplate;
     }
 
+    @RequestMapping("/msg/delete")
+    public void deleteMessage(@RequestBody NetMessage netMessage) {
+        mongoTemplate.remove(query(where("fromId").is(netMessage.getFromId()).and("toId").is(netMessage.getToId())
+                .and("type").is(netMessage.getType())), Message.class);
+    }
+
     @RequestMapping("/msg/addinfo/{myId}")
     public List<NetMessage> getAddInfoMessage(@PathVariable int myId) {
         List<NetMessage> netMessages = new ArrayList<>();
-        List<Message> messageList = mongoTemplate.find(query(where("toId").is(myId).and("type").is(5)), Message.class);
-        for (Message message : messageList) {
+        List<Message> addUserList = mongoTemplate.find(query(where("toId").is(myId).and("type").is(3)), Message.class);
+        List<Message> addRoomList = mongoTemplate.find(query(where("toId").is(myId).and("type").is(4)), Message.class);
+        List<Message> verifyUserList = mongoTemplate.find(query(where("toId").is(myId).and("type").is(5)), Message.class);
+        for (Message message : addUserList) {
+            netMessages.add(new NetMessage(message));
+        }
+        for (Message message : addRoomList) {
+            netMessages.add(new NetMessage(message));
+        }
+        for (Message message : verifyUserList) {
             netMessages.add(new NetMessage(message));
         }
         return netMessages;
@@ -208,6 +222,8 @@ public class MessageController {
         }
         String destination = "/uni/add/" + netMessage.getToId();
         messagingTemplate.convertAndSend(destination, netMessage);
+        mongoTemplate.remove(query(where("fromId").is(netMessage.getToId()).and("toId").is(netMessage.getFromId())
+                .and("type").is(3)), Message.class);
     }
 
     /**
