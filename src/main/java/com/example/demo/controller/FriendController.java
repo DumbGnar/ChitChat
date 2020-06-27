@@ -1,9 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Message;
-import com.example.demo.model.NetMessage;
-import com.example.demo.model.RoomSetting;
-import com.example.demo.model.UserSetting;
+import com.example.demo.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
@@ -22,6 +19,28 @@ public class FriendController {
     @Autowired
     public FriendController(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
+    }
+
+    @GetMapping("/users/{myId}/friends")
+    public List<User> getFriends(@PathVariable int myId) {
+        List<UserSetting> userSettings = mongoTemplate.find(query(where("myId").is(myId)), UserSetting.class);
+        List<User> users = new ArrayList<>();
+        for (UserSetting userSetting : userSettings) {
+            User user = mongoTemplate.findOne(query(where("_id").is(userSetting.getUid())), User.class);
+            users.add(user);
+        }
+        return users;
+    }
+
+    @GetMapping("/users/{myId}/rooms")
+    public List<Room> getRooms(@PathVariable int myId) {
+        List<RoomSetting> roomSettings = mongoTemplate.find(query(where("myId").is(myId)), RoomSetting.class);
+        List<Room> rooms = new ArrayList<>();
+        for (RoomSetting roomSetting : roomSettings) {
+            Room room = mongoTemplate.findOne(query(where("_id").is(roomSetting.getRid())), Room.class);
+            rooms.add(room);
+        }
+        return rooms;
     }
 
     @GetMapping("/users/{myId}/friends/{uid}/messages")
