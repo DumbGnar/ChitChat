@@ -16,9 +16,9 @@ public class UserSetting {
 
     private int uid;
 
-    private Date lastReadTime = new Date();
+    private Date lastReadTime;
 
-    private boolean blacked = false;
+    private boolean blacked;
 
     public UserSetting() {
     }
@@ -26,6 +26,8 @@ public class UserSetting {
     public UserSetting(int myId, int uid) {
         this.myId = myId;
         this.uid = uid;
+        this.lastReadTime = new Date();
+        this.blacked = false;
     }
 
     public UserSetting(ObjectId id, int myId, int uid, Date lastReadTime, boolean blacked) {

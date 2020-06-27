@@ -254,8 +254,8 @@ public class MessageController {
      * @return 未读消息列表
      */
     public List<Message> getUnreadUserMessage(int myId, int id, Date lastReadTime) {
-        List<Message> messageList = new ArrayList<>();
-        messageList = mongoTemplate.find(query(where("type").is(1).and("fromId").is(id).and("toId").is(myId).and("sendTime").gte(lastReadTime))
+        List<Message> messageList = mongoTemplate.find(query(where("type").is(1).and("fromId").is(id)
+                .and("toId").is(myId).and("sendTime").gte(lastReadTime))
                 .with(Sort.by("sendTime").ascending()), Message.class);
         return messageList;
     }
