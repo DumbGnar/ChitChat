@@ -2,10 +2,12 @@ package com.example.demo.controller;
 
 import com.example.demo.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -46,7 +48,11 @@ public class FriendController {
     @GetMapping("/users/{myId}/friends/{uid}/messages")
     public List<NetMessage> getFriendMessages(@PathVariable int myId,
                                               @PathVariable int uid) {
-        List<Message> messages = mongoTemplate.find(query(where("fromId").is(uid).and("toId").is(myId).and("type").is(1)), Message.class);
+        List<Message> messages = mongoTemplate.find(query(where("type").is(1)
+                .andOperator(new Criteria().orOperator(
+                        where("fromId").is(myId).and("toId").is(uid),
+                        where("fromId").is(uid).and("toId").is(myId))))
+                .with(Sort.by("sendTime").ascending()), Message.class);
         List<NetMessage> netMessages = new ArrayList<>();
         for (Message message : messages) {
             netMessages.add(new NetMessage(message));
