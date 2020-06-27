@@ -37,6 +37,14 @@ public class MessageController {
                 .and("type").is(netMessage.getType())), Message.class);
     }
 
+    /**
+     * 返回所有用户ID为myId的type=3/4/5的消息
+     * type=3 加好友申请
+     * type=4 加群申请
+     * type=5 加好友应答
+     * @param myId Message中的toId
+     * @return NetMessage List
+     */
     @RequestMapping("/msg/addinfo/{myId}")
     public List<NetMessage> getAddInfoMessage(@PathVariable int myId) {
         List<NetMessage> netMessages = new ArrayList<>();
@@ -187,6 +195,11 @@ public class MessageController {
      */
     @PostMapping("/msg/add-friend")
     public void addFriend(@RequestBody NetMessage netMessage) {
+        UserSetting userSetting = mongoTemplate.findOne(query(where("myId").is(netMessage.getFromId())
+                .and("uid").is(netMessage.getToId())), UserSetting.class);
+        if (userSetting != null) {
+            return;
+        }
         mongoTemplate.save(new Message(netMessage));
         String destination = "/uni/add/" + netMessage.getToId();
         messagingTemplate.convertAndSend(destination, netMessage);
@@ -198,6 +211,11 @@ public class MessageController {
      */
     @PostMapping("/msg/add-room")
     public void addRoom(@RequestBody NetMessage netMessage) {
+        RoomSetting roomSetting = mongoTemplate.findOne(query(where("myId").is(netMessage.getToId())
+                .and("rid").is(Integer.parseInt(netMessage.getContent()))), RoomSetting.class);
+        if (roomSetting != null) {
+            return;
+        }
         mongoTemplate.save(new Message(netMessage));
         String destination = "/uni/add" + netMessage.getToId();
         messagingTemplate.convertAndSend(destination, netMessage);
@@ -210,7 +228,9 @@ public class MessageController {
     @PostMapping("/msg/verify-friend")
     public void verifyFriend(@RequestBody NetMessage netMessage) {
         mongoTemplate.save(new Message(netMessage));
-        if ("true".equals(netMessage.getContent())) {
+        UserSetting userSetting = mongoTemplate.findOne(query(where("myId").is(netMessage.getFromId())
+                .and("uid").is(netMessage.getToId())), UserSetting.class);
+        if (userSetting == null && "true".equals(netMessage.getContent())) {
             mongoTemplate.save(new UserSetting(netMessage.getFromId(), netMessage.getToId()));
             mongoTemplate.save(new UserSetting(netMessage.getToId(), netMessage.getFromId()));
             User user1 = mongoTemplate.findOne(query(where("_id").is(netMessage.getFromId())), User.class);
