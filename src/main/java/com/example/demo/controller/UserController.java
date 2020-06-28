@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.model.Room;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
 import static org.springframework.data.mongodb.core.query.Criteria.where;

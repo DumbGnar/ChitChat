@@ -36,7 +36,7 @@ public class BotService {
     public static boolean createSelfChatbot(Integer uid) {
         Process proc;
         try {
-            int id = uid.intValue();
+            int id = uid;
             String command = "python " + BotPath + "/createSelfBot.py " + id;
             proc = Runtime.getRuntime().exec(command);    // 需要修改路径
             BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream(), "GBK"));
